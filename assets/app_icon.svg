@@ -1,0 +1,15 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Color (Blue) -->
+  <rect width="1024" height="1024" fill="#4CB0F9"/>
+
+  <!-- Decorative Colors based on the App's Theme -->
+  <!-- Pink circle (Background color from the app) -->
+  <circle cx="200" cy="200" r="100" fill="#FDE8E8" opacity="0.9"/>
+  <!-- Purple circle (To-Do color) -->
+  <circle cx="850" cy="800" r="140" fill="#9D84F7" opacity="0.9"/>
+  <!-- Green circle (Done color) -->
+  <circle cx="850" cy="250" r="80" fill="#76C893" opacity="0.9"/>
+
+  <!-- Checkmark (White) -->
+  <path d="M280 520 L450 670 L750 350" stroke="white" stroke-width="90" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
