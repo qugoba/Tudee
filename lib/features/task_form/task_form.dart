@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tudee/core/theme/app_theme.dart';
 import 'package:tudee/core/widgets/tudee_app_bar.dart';
 
-/// Form for adding a task, or editing one when [initialTitle] is given.
-/// Pops with the trimmed title when saved.
 class TaskFormScreen extends StatefulWidget {
   final String? initialTitle;
 

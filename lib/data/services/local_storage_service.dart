@@ -1,6 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Key-value storage (shared_preferences) used for the user's name.
 class LocalStorageService {
   static const _userNameKey = 'userName';
 

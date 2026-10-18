@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tudee/core/widgets/tudee_app_bar.dart';
 import 'package:tudee/data/models/task.dart';
@@ -19,7 +21,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late List<Task> _tasks = TaskService.getTasks(widget.userName);
+  List<Task> _tasks = const [];
+  StreamSubscription<List<Task>>? _subscription;
 
   int get _doneCount => _tasks.where((t) => t.isDone).length;
   int get _todoCount => _tasks.length - _doneCount;
@@ -27,17 +30,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _migrateOldTasks();
+    _subscription = TaskService.watchTasks(widget.userName).listen((tasks) {
+      if (mounted) setState(() => _tasks = tasks);
+    });
+    unawaited(TaskService.migrateFromPrefs(widget.userName));
   }
 
-  Future<void> _migrateOldTasks() async {
-    final migrated = await TaskService.migrateFromPrefs(widget.userName);
-    if (migrated) _reloadTasks();
-  }
-
-  void _reloadTasks() {
-    if (!mounted) return;
-    setState(() => _tasks = TaskService.getTasks(widget.userName));
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 
   Future<String?> _askForTitle({String? initialTitle}) {
@@ -53,21 +55,41 @@ class _HomeScreenState extends State<HomeScreen> {
     final title = await _askForTitle();
     if (title == null) return;
 
-    await TaskService.addTask(widget.userName, title);
-    _reloadTasks();
+    unawaited(TaskService.addTask(widget.userName, title));
   }
 
   Future<void> _editTask(Task task) async {
     final title = await _askForTitle(initialTitle: task.title);
     if (title == null) return;
 
-    await TaskService.updateTitle(task.key, title);
-    _reloadTasks();
+    unawaited(TaskService.updateTitle(task.id, title));
   }
 
-  Future<void> _toggleTask(Task task) async {
-    await TaskService.toggleDone(task.key);
-    _reloadTasks();
+  Future<void> _deleteTask(Task task) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete task?'),
+        content: Text(task.title),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    unawaited(TaskService.deleteTask(task.id));
+  }
+
+  void _toggleTask(Task task) {
+    unawaited(TaskService.setDone(task.id, isDone: !task.isDone));
   }
 
   Future<void> _logout() async {
@@ -112,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     task: task,
                     onToggle: () => _toggleTask(task),
                     onEdit: () => _editTask(task),
+                    onDelete: () => _deleteTask(task),
                   ),
                 ),
           ],

@@ -1,7 +1,7 @@
 class Task {
-  final int key;
+  final String id;
   final String title;
   final bool isDone;
 
-  const Task({required this.key, required this.title, required this.isDone});
+  const Task({required this.id, required this.title, required this.isDone});
 }
