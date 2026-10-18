@@ -6,12 +6,14 @@ class TaskCard extends StatelessWidget {
   final Task task;
   final VoidCallback onToggle;
   final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   const TaskCard({
     super.key,
     required this.task,
     required this.onToggle,
     required this.onEdit,
+    required this.onDelete,
   });
 
   @override
@@ -29,13 +31,25 @@ class TaskCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _StatusChip(isDone: task.isDone),
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    iconSize: 20,
-                    color: AppColors.primary,
-                    tooltip: 'Edit task',
-                    visualDensity: VisualDensity.compact,
-                    onPressed: onEdit,
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        iconSize: 20,
+                        color: AppColors.primary,
+                        tooltip: 'Edit task',
+                        visualDensity: VisualDensity.compact,
+                        onPressed: onEdit,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        iconSize: 20,
+                        color: Colors.red,
+                        tooltip: 'Delete task',
+                        visualDensity: VisualDensity.compact,
+                        onPressed: onDelete,
+                      ),
+                    ],
                   ),
                 ],
               ),
